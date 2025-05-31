@@ -14,7 +14,7 @@ export const syncLeadsFromSheets = async (): Promise<void> => {
     const user = auth.currentUser;
 
     if (!user || !user.phoneNumber) {
-      throw new Error('User not authenticated or phone number missing');
+      throw new Error('User not authenticated or phone number missing!!');
     }
 
     // Sanitize and extract phone number digits
