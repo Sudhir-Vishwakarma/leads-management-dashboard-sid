@@ -21,6 +21,11 @@ export interface Lead {
   [key: string]: string | number | boolean | string[] | undefined;
 }
 
+
+
+
+
+
 export const getLeadsCol = () => {
   const auth = getAuth(app);
   const user = auth.currentUser;

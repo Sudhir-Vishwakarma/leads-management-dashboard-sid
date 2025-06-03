@@ -3,6 +3,7 @@ import { getAuth } from 'firebase/auth';
 import { Lead, LeadsResponse } from '../types';
 import { db, getLeadsCol, updateLead } from '../services/firebase';
 import { doc, setDoc, addDoc, getDocs } from 'firebase/firestore';
+import { createLead } from './firebase';
 
 const BASE_API_URL = 'https://asia-south1-starzapp.cloudfunctions.net/whatsAppWebHook-2/fetch-individual-client-leads';
 
@@ -67,6 +68,23 @@ export const fetchLeadsFromFirestore = async (): Promise<Lead[]> => {
     throw error;
   }
 };
+
+
+
+export const importLeadsFromCSV = async (leads: Lead[]): Promise<void> => {
+  try {
+    // Use batched writes for better performance
+    const batchPromises = leads.map(lead => createLead(lead));
+    await Promise.all(batchPromises);
+  } catch (error) {
+    console.error('Error importing leads:', error);
+    throw new Error('Failed to save leads to database');
+  }
+};
+
+
+
+
 
 export const updateLeadStatus = async (leadId: string, newStatus: string): Promise<void> => {
   try {

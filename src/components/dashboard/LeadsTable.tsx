@@ -49,77 +49,76 @@ const LeadsTable: React.FC<LeadsTableProps> = ({
 
   // Get platform icon and color
   const getPlatformInfo = (platform: string | undefined) => {
-  if (!platform) return { icon: null, color: "bg-gray-200 text-gray-800" };
+    if (!platform) return { icon: null, color: "bg-gray-200 text-gray-800" };
 
-  const platformLower = platform.toLowerCase();
+    const platformLower = platform.toLowerCase();
 
-  // Check shorthand names first
-  if (platformLower === "ig")
+    // Check shorthand names first
+    if (platformLower === "ig")
+      return {
+        icon: <FaInstagram className="w-3 h-3" />,
+        color: "bg-pink-100 text-pink-800",
+      };
+
+    if (platformLower === "fb")
+      return {
+        icon: <FaFacebookF className="w-3 h-3" />,
+        color: "bg-blue-100 text-blue-800",
+      };
+
+    if (platformLower === "wa")
+      return {
+        icon: <FaWhatsapp className="w-3 h-3" />,
+        color: "bg-green-100 text-green-800",
+      };
+
+    // Check regular platform names
+    if (platformLower.includes("facebook"))
+      return {
+        icon: <FaFacebookF className="w-3 h-3" />,
+        color: "bg-blue-100 text-blue-800",
+      };
+
+    if (platformLower.includes("instagram"))
+      return {
+        icon: <FaInstagram className="w-3 h-3" />,
+        color: "bg-pink-100 text-pink-800",
+      };
+
+    if (platformLower.includes("google"))
+      return {
+        icon: <MessageSquare className="w-3 h-3" />,
+        color: "bg-red-100 text-red-800",
+      };
+
+    if (platformLower.includes("zalo"))
+      return {
+        icon: <MessagesSquare className="w-3 h-3" />,
+        color: "bg-blue-100 text-blue-800",
+      };
+
+    if (platformLower.includes("tiktok"))
+      return {
+        icon: <MessageCircle className="w-3 h-3" />,
+        color: "bg-black text-white",
+      };
+
+    if (platformLower.includes("whatsapp"))
+      return {
+        icon: <FaWhatsapp className="w-3 h-3" />,
+        color: "bg-green-100 text-green-800",
+      };
+
+    // Default fallback
     return {
-      icon: <FaInstagram className="w-3 h-3" />,
-      color: "bg-pink-100 text-pink-800",
+      icon: (
+        <span className="text-xs font-bold">
+          {platform.substring(0, 2).toUpperCase()}
+        </span>
+      ),
+      color: "bg-gray-200 text-gray-800",
     };
-
-  if (platformLower === "fb")
-    return {
-      icon: <FaFacebookF className="w-3 h-3" />,
-      color: "bg-blue-100 text-blue-800",
-    };
-
-  if (platformLower === "wa")
-    return {
-      icon: <FaWhatsapp className="w-3 h-3" />,
-      color: "bg-green-100 text-green-800",
-    };
-
-  // Check regular platform names
-  if (platformLower.includes("facebook"))
-    return {
-      icon: <FaFacebookF className="w-3 h-3" />,
-      color: "bg-blue-100 text-blue-800",
-    };
-
-  if (platformLower.includes("instagram"))
-    return {
-      icon: <FaInstagram className="w-3 h-3" />,
-      color: "bg-pink-100 text-pink-800",
-    };
-
-  if (platformLower.includes("google"))
-    return {
-      icon: <MessageSquare className="w-3 h-3" />,
-      color: "bg-red-100 text-red-800",
-    };
-
-  if (platformLower.includes("zalo"))
-    return {
-      icon: <MessagesSquare className="w-3 h-3" />,
-      color: "bg-blue-100 text-blue-800",
-    };
-
-  if (platformLower.includes("tiktok"))
-    return {
-      icon: <MessageCircle className="w-3 h-3" />,
-      color: "bg-black text-white",
-    };
-
-  if (platformLower.includes("whatsapp"))
-    return {
-      icon: <FaWhatsapp className="w-3 h-3" />,
-      color: "bg-green-100 text-green-800",
-    };
-
-  // Default fallback
-  return {
-    icon: (
-      <span className="text-xs font-bold">
-        {platform.substring(0, 2).toUpperCase()}
-      </span>
-    ),
-    color: "bg-gray-200 text-gray-800",
   };
-};
-
 
   const parseComments = (comments: string) => {
     const parts = comments.split(/📢|👤|📞|📍|💰|👶|🏆/).filter(Boolean);
@@ -261,7 +260,7 @@ const LeadsTable: React.FC<LeadsTableProps> = ({
   };
 
   const extractScore = (comments: string) => {
-    const scoreMatch = comments.match(/🏆 Lead Score: (\d+)/);
+    const scoreMatch = comments.match(/Lead Score: (\d+)/);
     return scoreMatch ? parseInt(scoreMatch[1], 10) : null;
   };
 
@@ -676,27 +675,47 @@ const LeadsTable: React.FC<LeadsTableProps> = ({
               </div>
 
               <div className="flex-1 overflow-y-auto p-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                  {/* PERSONAL INFORMATION SECTION */}
-                  <div className="md:col-span-2 mb-6 pb-4 border-b border-gray-200">
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">
-                      Personal Information
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {Object.entries(selectedLead)
-                        .filter(([key]) =>
-                          [
-                            "name",
-                            "email",
-                            "phone",
-                            "city",
-                            "state",
-                            "country",
-                            "zip_code",
-                            "address",
-                          ].includes(key)
-                        )
-                        .map(([key, value]) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Combined fields section */}
+                  {Object.entries(selectedLead)
+                    .filter(
+                      ([key]) =>
+                        ![
+                          "id",
+                          "commentsHistory",
+                          "comments",
+                          "customerComment",
+                        ].includes(key)
+                    )
+                    .map(([key, value]) => {
+                      if (key === "platform") {
+                        const platformInfo = getPlatformInfo(
+                          String(value) || ""
+                        );
+                        return (
+                          <div
+                            key={key}
+                            className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-blue-200"
+                          >
+                            <div className="flex items-start">
+                              <span className="font-medium text-gray-700 flex-shrink-0 w-32">
+                                {formatLabel(key)}:
+                              </span>
+                              <div className="flex items-center">
+                                <div
+                                  className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${platformInfo.color} font-bold mr-2`}
+                                >
+                                  {platformInfo.icon}
+                                </div>
+                                <span className="text-gray-900 font-medium">
+                                  {String(value) || "N/A"}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      } else {
+                        return (
                           <DetailCard
                             key={key}
                             label={formatLabel(key)}
@@ -707,175 +726,108 @@ const LeadsTable: React.FC<LeadsTableProps> = ({
                                 : undefined
                             }
                           />
-                        ))}
+                        );
+                      }
+                    })}
+
+                  {/* Parsed fields from comments */}
+                  <DetailCard
+                    label="Location"
+                    value={
+                      extractLocation(selectedLead.comments || "") || "N/A"
+                    }
+                  />
+                  <DetailCard
+                    label="Profession"
+                    value={
+                      parseComments(selectedLead.comments || "").find(
+                        (item) => item.label === "Profession"
+                      )?.value || "N/A"
+                    }
+                  />
+                  <DetailCard
+                    label="They are"
+                    value={
+                      parseComments(selectedLead.comments || "").find(
+                        (item) => item.label === "They are"
+                      )?.value || "N/A"
+                    }
+                  />
+                  <DetailCard
+                    label="Child's Age"
+                    value={
+                      parseComments(selectedLead.comments || "").find(
+                        (item) => item.label === "Child's Age"
+                      )?.value || "N/A"
+                    }
+                  />
+
+                  {/* Lead Score with color */}
+                  <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-blue-200">
+                    <div className="flex items-start">
+                      <span className="font-medium text-gray-700 flex-shrink-0 w-32">
+                        Lead Score:
+                      </span>
+                      <span
+                        className={`${getScoreColor(
+                          extractScore(selectedLead.comments || "")
+                        )} font-medium flex-grow break-words`}
+                      >
+                        {extractScore(selectedLead.comments || "") ?? "N/A"}
+                      </span>
                     </div>
                   </div>
 
-                  {/* OTHER FIELDS SECTION */}
-                  <div className="md:col-span-2">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {Object.entries(selectedLead)
-                        .filter(
-                          ([key]) =>
-                            ![
-                              "id",
-                              "commentsHistory",
-                              "comments",
-                              "name",
-                              "email",
-                              "phone",
-                              "city",
-                              "state",
-                              "country",
-                              "zip_code",
-                              "address",
-                            ].includes(key)
-                        )
-                        .map(([key, value]) => {
-                          if (key === "platform") {
-                            const platformInfo = getPlatformInfo(
-                              String(value) || ""
-                            );
-                            return (
-                              <div
-                                key={key}
-                                className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-blue-200"
-                              >
-                                <div className="flex items-start">
-                                  <span className="font-medium text-gray-700 flex-shrink-0 w-32">
-                                    {formatLabel(key)}:
-                                  </span>
-                                  <div className="flex items-center">
-                                    <div
-                                      className={`inline-flex items-center justify-center w-8 h-8 rounded-full ${platformInfo.color} font-bold mr-2`}
-                                    >
-                                      {platformInfo.icon}
-                                    </div>
-                                    <span className="text-gray-900 font-medium">
-                                      {String(value) || "N/A"}
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                            );
-                          } else {
-                            return (
-                              <DetailCard
-                                key={key}
-                                label={formatLabel(key)}
-                                value={String(formatValue(key, value))}
-                                statusColor={
-                                  key === "lead_status"
-                                    ? getStatusColor(String(value))
-                                    : undefined
-                                }
-                              />
-                            );
-                          }
-                        })}
-
-                      {/* PARSED FIELDS SECTION */}
-                      <DetailCard
-                        label="Location"
-                        value={
-                          extractLocation(selectedLead.comments || "") || "N/A"
-                        }
-                      />
-                      <DetailCard
-                        label="Profession"
-                        value={
-                          parseComments(selectedLead.comments || "").find(
-                            (item) => item.label === "Profession"
-                          )?.value || "N/A"
-                        }
-                      />
-                      <DetailCard
-                        label="They are"
-                        value={
-                          parseComments(selectedLead.comments || "").find(
-                            (item) => item.label === "They are"
-                          )?.value || "N/A"
-                        }
-                      />
-                      <DetailCard
-                        label="Child's Age"
-                        value={
-                          parseComments(selectedLead.comments || "").find(
-                            (item) => item.label === "Child's Age"
-                          )?.value || "N/A"
-                        }
-                      />
-                      <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-blue-200">
-                        <div className="flex items-start">
-                          <span className="font-medium text-gray-700 flex-shrink-0 w-32">
-                            Lead Score:
-                          </span>
-                          <span
-                            className={`${getScoreColor(
-                              extractScore(selectedLead.comments || "")
-                            )} font-medium flex-grow break-words`}
+                  {/* Editable Customer Comment */}
+                  <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-blue-200 md:col-span-2">
+                    <div className="flex items-start">
+                      <span className="font-medium text-gray-700 flex-shrink-0 w-32">
+                        Customer Comment:
+                      </span>
+                      {isEditingCustomerComment ? (
+                        <div className="flex-grow">
+                          <textarea
+                            value={customerComment}
+                            onChange={(e) => setCustomerComment(e.target.value)}
+                            rows={4}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            autoFocus
+                            placeholder="Add your comment here"
+                          />
+                          <div className="flex justify-end space-x-2 mt-2">
+                            <button
+                              onClick={() => {
+                                setIsEditingCustomerComment(false);
+                                setCustomerComment(
+                                  String(selectedLead.customerComment || "")
+                                );
+                              }}
+                              className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              onClick={handleSaveCustomerComment}
+                              className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                            >
+                              Save
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex-grow group relative">
+                          <p className="text-gray-900 font-medium break-words">
+                            {customerComment || "No comments yet"}
+                          </p>
+                          <button
+                            className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-gray-500 hover:text-blue-600"
+                            onClick={() => setIsEditingCustomerComment(true)}
+                            title="Edit comment"
                           >
-                            {extractScore(selectedLead.comments || "") ?? "N/A"}
-                          </span>
+                            <Pencil size={16} />
+                          </button>
                         </div>
-                      </div>
-
-                      {/* CUSTOMER COMMENT FIELD */}
-                      <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm transition-all duration-200 hover:shadow-md hover:border-blue-200 md:col-span-2">
-                        <div className="flex items-start">
-                          <span className="font-medium text-gray-700 flex-shrink-0 w-32">
-                            Comment:
-                          </span>
-                          {isEditingCustomerComment ? (
-                            <div className="flex-grow">
-                              <textarea
-                                value={customerComment}
-                                onChange={(e) =>
-                                  setCustomerComment(e.target.value)
-                                }
-                                rows={4}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                autoFocus
-                                placeholder="Add your comment here"
-                              />
-                              <div className="flex justify-end space-x-2 mt-2">
-                                <button
-                                  onClick={() => {
-                                    setIsEditingCustomerComment(false);
-                                    setCustomerComment(
-                                      String(selectedLead.customerComment || "")
-                                    );
-                                  }}
-                                  className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800"
-                                >
-                                  Cancel
-                                </button>
-                                <button
-                                  onClick={handleSaveCustomerComment}
-                                  className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                                >
-                                  Save
-                                </button>
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="flex-grow group relative">
-                              <p className="text-gray-900 font-medium break-words">
-                                {customerComment || "No comments yet"}
-                              </p>
-                              <button
-                                className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-gray-500 hover:text-blue-600"
-                                onClick={() =>
-                                  setIsEditingCustomerComment(true)
-                                }
-                                title="Edit comment"
-                              >
-                                <Pencil size={16} />
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      </div>
+                      )}
                     </div>
                   </div>
                 </div>
