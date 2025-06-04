@@ -11,6 +11,8 @@ import {
 } from "lucide-react";
 import { scheduleFollowUp, updateCustomerComment } from "../../services/api";
 import { FaBell, FaWhatsapp, FaFacebookF, FaInstagram } from "react-icons/fa";
+// Add to top of LeadsTable.tsx
+// import { firestore } from '../../services/firebase'; // Adjust path as needed
 
 interface LeadsTableProps {
   leads: Lead[];
@@ -149,6 +151,11 @@ const LeadsTable: React.FC<LeadsTableProps> = ({
     }
   };
 
+
+
+
+
+
   const handleSchedule = async (leadId: string) => {
     try {
       const dateTime = new Date(`${followUpDate}T${followUpTime}:00`);
@@ -160,6 +167,27 @@ const LeadsTable: React.FC<LeadsTableProps> = ({
       alert("Failed to schedule follow-up. Please try again.");
     }
   };
+
+
+
+// const handleSchedule = async (leadId: string) => {
+//   try {
+//     // Create date in UTC to avoid timezone issues
+//     const dateTime = new Date(`${followUpDate}T${followUpTime}:00Z`);
+    
+//     await scheduleFollowUp(leadId, dateTime, followUpTime);
+    
+//     // Pass date string as required by the callback
+//     onFollowUpScheduled(leadId, followUpDate, followUpTime);
+//     setFollowUpLeadId(null);
+//   } catch (error) {
+//     console.error("Scheduling error:", error);
+//     alert("Failed to schedule follow-up. Please try again.");
+//   }
+// };
+
+
+
 
   const openSidePanel = (lead: Lead) => {
     setSelectedLead(lead);
@@ -264,18 +292,33 @@ const LeadsTable: React.FC<LeadsTableProps> = ({
     return scoreMatch ? parseInt(scoreMatch[1], 10) : null;
   };
 
+  // const getStatusColor = (status: string | undefined) => {
+  //   if (!status) return "bg-gray-100 text-gray-800";
+
+  //   switch (status.toLowerCase()) {
+  //     case "meeting done":
+  //       return "bg-blue-100 text-blue-800";
+  //     case "deal done":
+  //     case "deal closed":
+  //       return "bg-green-100 text-green-800";
+  //     default:
+  //       return "bg-gray-100 text-gray-800";
+  //   }
+  // };
+
   const getStatusColor = (status: string | undefined) => {
     if (!status) return "bg-gray-100 text-gray-800";
 
-    switch (status.toLowerCase()) {
-      case "meeting done":
-        return "bg-blue-100 text-blue-800";
-      case "deal done":
-      case "deal closed":
-        return "bg-green-100 text-green-800";
-      default:
-        return "bg-gray-100 text-gray-800";
+    const statusLower = status.toLowerCase();
+
+    if (statusLower.includes("meeting done")) {
+      return "bg-blue-100 text-blue-800";
     }
+    if (statusLower.includes("deal")) {
+      // Handles both "Deal Done" and "Deal Closed"
+      return "bg-green-100 text-green-800";
+    }
+    return "bg-gray-100 text-gray-800";
   };
 
   // Detail Card Component
@@ -347,7 +390,7 @@ const LeadsTable: React.FC<LeadsTableProps> = ({
               onChange={(e) => setStatusFilter(e.target.value)}
               className="focus:ring-blue-500 focus:border-blue-500 block sm:text-sm border-gray-300 rounded-md"
             >
-              <option value="all">All Statuses</option>
+              <option value="all">All Status</option>
               {statuses.map((status) => (
                 <option key={status} value={status}>
                   {status}
@@ -542,7 +585,7 @@ const LeadsTable: React.FC<LeadsTableProps> = ({
                                 <option value="Meeting Done">
                                   Meeting Done
                                 </option>
-                                <option value="Deal Closed">Deal Closed</option>
+                                <option value="Deal done">Deal Closed</option>
                               </select>
                             </td>
                             <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium w-32">

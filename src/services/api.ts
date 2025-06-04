@@ -102,7 +102,10 @@ export const scheduleFollowUp = async (
   time: string
 ): Promise<void> => {
   try {
-    await updateLead(leadId, { followUpDate: date.toISOString(), followUpTime: time });
+    await updateLead(leadId, { 
+      followUpDate: date.toISOString(), 
+      followUpTime: time 
+    });
   } catch (error) {
     console.error('Error scheduling follow-up:', error);
     throw error;

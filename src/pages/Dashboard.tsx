@@ -149,7 +149,7 @@ const Dashboard: React.FC = () => {
     const meetingDone = list.filter(
       (l) => l.lead_status === "Meeting Done"
     ).length;
-    const dealDone = list.filter((l) => l.lead_status === "Deal Done").length;
+    const dealDone = list.filter((l) => l.lead_status === "Deal done").length;
     setKpis([
       {
         title: "Total Leads",

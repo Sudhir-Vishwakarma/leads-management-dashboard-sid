@@ -21,8 +21,18 @@ export interface Lead {
   [key: string]: string | number | boolean | string[] | undefined;
 }
 
+// 
 
+// Get leads collection for the current user// Add new interface for FollowUpData
+export interface FollowUpData {
+  followUpTimestamp?: Date; // Use single timestamp field
+  customerComment?: string;
+}
 
+// Update updateLead function
+// (Removed duplicate declaration of updateLead)
+
+// 
 
 
 
